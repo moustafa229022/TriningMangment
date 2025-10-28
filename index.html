@@ -1,0 +1,2093 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام إدارة التدريب المتقدم</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./Untitled-1.css">
+ </head>
+ <body class="min-h-full bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+  <main class="container mx-auto px-6 py-8 max-w-7xl"><!-- Header -->
+   <header class="text-center mb-12">
+    <div class="flex justify-between items-center mb-8">
+     <div class="inline-flex items-center gap-6">
+      <div class="bg-gradient-to-br from-blue-500 to-indigo-600 text-white w-24 h-24 flex items-center justify-center text-3xl font-bold rounded-2xl shadow-lg"><i class="fas fa-graduation-cap"></i>
+      </div>
+      <div class="text-right">
+       <h1 id="system-title" class="text-5xl font-bold text-gray-800 mb-2">نظام إدارة التدريب المتقدم</h1>
+       <p id="welcome-message" class="text-xl text-gray-600">إدارة شاملة وفعالة لجميع برامج التدريب</p>
+      </div>
+     </div>
+     <div class="flex items-center gap-4"><button onclick="showNotifications()" class="relative p-3 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-gray-600 hover:text-blue-600"> <i class="fas fa-bell text-xl"></i> <span id="notification-badge" class="notification-badge hidden">3</span> </button>
+      <div class="text-left">
+       <div class="text-sm text-gray-600">
+        مرحباً بك
+       </div>
+       <div class="font-semibold text-gray-800">
+        المدير العام
+       </div>
+      </div>
+      <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl flex items-center justify-center text-white font-bold">
+       م
+      </div>
+     </div>
+    </div><!-- Stats Dashboard -->
+    <div id="stats-dashboard" class="grid md:grid-cols-4 gap-6 mb-8">
+     <div class="stat-card">
+      <div class="text-4xl font-bold mb-2" id="total-trainings">
+       0
+      </div>
+      <div class="text-sm opacity-90">
+       إجمالي البرامج
+      </div><i class="fas fa-book-open text-2xl mt-2 opacity-75"></i>
+     </div>
+     <div class="stat-card" style="background: linear-gradient(135deg, #10b981, #059669);">
+      <div class="text-4xl font-bold mb-2" id="active-trainings">
+       0
+      </div>
+      <div class="text-sm opacity-90">
+       البرامج النشطة
+      </div><i class="fas fa-play-circle text-2xl mt-2 opacity-75"></i>
+     </div>
+     <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+      <div class="text-4xl font-bold mb-2" id="total-participants">
+       0
+      </div>
+      <div class="text-sm opacity-90">
+       إجمالي المتدربين
+      </div><i class="fas fa-users text-2xl mt-2 opacity-75"></i>
+     </div>
+     <div class="stat-card" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+      <div class="text-4xl font-bold mb-2" id="completion-rate">
+       0%
+      </div>
+      <div class="text-sm opacity-90">
+       معدل الإنجاز
+      </div><i class="fas fa-chart-line text-2xl mt-2 opacity-75"></i>
+     </div>
+    </div>
+   </header><!-- Navigation Tabs -->
+   <div class="flex flex-wrap gap-3 mb-8 justify-center">
+    <div class="nav-tab active" onclick="switchTab('dashboard')"><i class="fas fa-tachometer-alt ml-2"></i> <span id="dashboard-title">لوحة المعلومات</span>
+    </div>
+    <div class="nav-tab" onclick="switchTab('trainings')"><i class="fas fa-book-open ml-2"></i> البرامج التدريبية
+    </div>
+    <div class="nav-tab" onclick="switchTab('calendar')"><i class="fas fa-calendar-alt ml-2"></i> التقويم
+    </div>
+    <div class="nav-tab" onclick="switchTab('reports')"><i class="fas fa-chart-bar ml-2"></i> التقارير
+    </div>
+    <div class="nav-tab" onclick="switchTab('participants')"><i class="fas fa-users ml-2"></i> المتدربين
+    </div>
+    <div class="nav-tab" onclick="switchTab('certificates')"><i class="fas fa-certificate ml-2"></i> الشهادات
+    </div>
+    <div class="nav-tab" onclick="switchTab('analytics')"><i class="fas fa-chart-line ml-2"></i> التحليلات المتقدمة
+    </div>
+    <div class="nav-tab" onclick="switchTab('settings')"><i class="fas fa-cog ml-2"></i> الإعدادات
+    </div>
+   </div><!-- Dashboard Tab -->
+   <div id="dashboard-tab" class="tab-content">
+    <div class="grid lg:grid-cols-2 gap-8"><!-- Recent Trainings -->
+     <div class="dashboard-widget">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center"><i class="fas fa-clock text-blue-500 ml-3"></i> البرامج الحديثة</h3>
+      <div id="recent-trainings" class="space-y-4"><!-- Recent trainings will be rendered here -->
+      </div>
+     </div><!-- Quick Stats -->
+     <div class="dashboard-widget">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center"><i class="fas fa-chart-pie text-green-500 ml-3"></i> إحصائيات سريعة</h3>
+      <div class="chart-container">
+       <div class="text-center"><i class="fas fa-chart-bar text-4xl mb-4"></i>
+        <p>الرسوم البيانية التفاعلية</p>
+        <p class="text-sm">عرض مرئي للبيانات والإحصائيات</p>
+       </div>
+      </div>
+     </div><!-- Upcoming Events -->
+     <div class="dashboard-widget">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center"><i class="fas fa-calendar-check text-purple-500 ml-3"></i> الأحداث القادمة</h3>
+      <div id="upcoming-events" class="space-y-3"><!-- Upcoming events will be rendered here -->
+      </div>
+     </div><!-- Performance Metrics -->
+     <div class="dashboard-widget">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center"><i class="fas fa-trophy text-yellow-500 ml-3"></i> مؤشرات الأداء</h3>
+      <div id="performance-metrics" class="space-y-4"><!-- Performance metrics will be rendered here -->
+      </div>
+     </div>
+    </div>
+   </div><!-- Trainings Tab -->
+   <div id="trainings-tab" class="tab-content hidden"><!-- Controls -->
+    <div class="flex flex-wrap gap-4 mb-8 justify-between items-center">
+     <div class="flex flex-wrap gap-4"><button id="add-training-btn" class="btn-primary"> <i class="fas fa-plus ml-2"></i> <span id="add-training-text">إضافة برنامج تدريبي جديد</span> </button> <select id="category-filter" class="form-input"> <option value="">جميع الفئات</option> <option value="technical">تقني</option> <option value="management">إداري</option> <option value="soft-skills">مهارات ناعمة</option> <option value="leadership">قيادة</option> <option value="sales">مبيعات</option> <option value="marketing">تسويق</option> </select> <select id="status-filter" class="form-input"> <option value="">جميع الحالات</option> <option value="upcoming">قادم</option> <option value="active">نشط</option> <option value="completed">مكتمل</option> <option value="cancelled">ملغي</option> </select> <select id="level-filter" class="form-input"> <option value="">جميع المستويات</option> <option value="beginner">مبتدئ</option> <option value="intermediate">متوسط</option> <option value="advanced">متقدم</option> <option value="expert">خبير</option> </select>
+     </div>
+     <div class="flex gap-2"><button id="grid-view-btn" class="btn-secondary"> <i class="fas fa-th"></i> </button> <button id="list-view-btn" class="btn-secondary"> <i class="fas fa-list"></i> </button>
+     </div>
+    </div><!-- Trainings Container -->
+    <div id="trainings-container" class="training-grid"><!-- Trainings will be rendered here -->
+    </div><!-- Empty State -->
+    <div id="empty-state" class="text-center py-16 hidden">
+     <div class="text-6xl mb-4">
+      📚
+     </div>
+     <h3 class="text-2xl font-bold text-gray-700 mb-2">لا توجد برامج تدريبية بعد</h3>
+     <p class="text-gray-500 mb-6">ابدأ بإضافة أول برنامج تدريبي لك</p><button onclick="showAddTrainingModal()" class="btn-primary"> إضافة برنامج تدريبي </button>
+    </div>
+   </div><!-- Calendar Tab -->
+   <div id="calendar-tab" class="tab-content hidden">
+    <div class="dashboard-widget">
+     <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">تقويم التدريب</h2>
+      <div class="flex gap-4"><button id="prev-month" class="btn-secondary"> <i class="fas fa-chevron-right"></i> </button> <span id="current-month" class="text-lg font-semibold text-gray-700"></span> <button id="next-month" class="btn-secondary"> <i class="fas fa-chevron-left"></i> </button>
+      </div>
+     </div>
+     <div id="calendar-container"><!-- Calendar will be rendered here -->
+     </div>
+    </div>
+   </div><!-- Reports Tab -->
+   <div id="reports-tab" class="tab-content hidden">
+    <div class="grid lg:grid-cols-2 gap-8">
+     <div class="dashboard-widget">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6">تقرير الأداء الشهري</h3>
+      <div class="chart-container">
+       <div class="text-center"><i class="fas fa-chart-line text-4xl mb-4"></i>
+        <p>رسم بياني للأداء</p>
+       </div>
+      </div>
+     </div>
+     <div class="dashboard-widget">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6">توزيع الفئات</h3>
+      <div class="chart-container">
+       <div class="text-center"><i class="fas fa-chart-pie text-4xl mb-4"></i>
+        <p>توزيع البرامج حسب الفئة</p>
+       </div>
+      </div>
+     </div>
+     <div class="dashboard-widget lg:col-span-2">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6">تقرير مفصل</h3>
+      <div id="detailed-report" class="space-y-4"><!-- Detailed report will be rendered here -->
+      </div>
+     </div>
+    </div>
+   </div><!-- Participants Tab -->
+   <div id="participants-tab" class="tab-content hidden">
+    <div class="dashboard-widget">
+     <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">إدارة المتدربين</h2><button onclick="showAddParticipantModal()" class="btn-primary"> <i class="fas fa-user-plus ml-2"></i> إضافة متدرب جديد </button>
+     </div>
+     <div id="participants-list" class="space-y-4"><!-- Participants will be rendered here -->
+     </div>
+    </div>
+   </div><!-- Certificates Tab -->
+   <div id="certificates-tab" class="tab-content hidden">
+    <div class="dashboard-widget mb-8">
+     <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-800 flex items-center"><i class="fas fa-certificate text-yellow-500 ml-3"></i> إدارة الشهادات</h2><button onclick="generateCertificates()" class="btn-primary"> <i class="fas fa-award ml-2"></i> إنشاء شهادات جماعية </button>
+     </div>
+     <div class="grid lg:grid-cols-3 gap-6 mb-8">
+      <div class="bg-gradient-to-br from-yellow-500 to-orange-600 p-6 rounded-2xl text-white text-center">
+       <div class="text-3xl font-bold mb-2" id="total-certificates">
+        0
+       </div>
+       <div class="text-sm opacity-90">
+        إجمالي الشهادات
+       </div><i class="fas fa-certificate text-2xl mt-2 opacity-75"></i>
+      </div>
+      <div class="bg-gradient-to-br from-green-500 to-emerald-600 p-6 rounded-2xl text-white text-center">
+       <div class="text-3xl font-bold mb-2" id="issued-certificates">
+        0
+       </div>
+       <div class="text-sm opacity-90">
+        شهادات مُصدرة
+       </div><i class="fas fa-check-circle text-2xl mt-2 opacity-75"></i>
+      </div>
+      <div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-6 rounded-2xl text-white text-center">
+       <div class="text-3xl font-bold mb-2" id="pending-certificates">
+        0
+       </div>
+       <div class="text-sm opacity-90">
+        في الانتظار
+       </div><i class="fas fa-clock text-2xl mt-2 opacity-75"></i>
+      </div>
+     </div>
+     <div class="bg-white rounded-2xl p-6 border border-gray-200">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">قوالب الشهادات</h3>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4" id="certificate-templates"><!-- Certificate templates will be rendered here -->
+      </div>
+     </div>
+    </div>
+    <div class="dashboard-widget">
+     <h3 class="text-xl font-bold text-gray-800 mb-6">سجل الشهادات</h3>
+     <div id="certificates-list" class="space-y-4"><!-- Certificates list will be rendered here -->
+     </div>
+    </div>
+   </div><!-- Advanced Analytics Tab -->
+   <div id="analytics-tab" class="tab-content hidden">
+    <div class="grid lg:grid-cols-2 gap-8 mb-8"><!-- Performance Trends -->
+     <div class="dashboard-widget">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center"><i class="fas fa-trending-up text-green-500 ml-3"></i> اتجاهات الأداء</h3>
+      <div class="space-y-4">
+       <div class="bg-gradient-to-r from-green-100 to-emerald-100 p-4 rounded-xl">
+        <div class="flex justify-between items-center">
+         <div>
+          <h4 class="font-semibold text-gray-800">معدل النمو الشهري</h4>
+          <p class="text-sm text-gray-600">زيادة في عدد المتدربين</p>
+         </div>
+         <div class="text-2xl font-bold text-green-600">
+          +23%
+         </div>
+        </div>
+       </div>
+       <div class="bg-gradient-to-r from-blue-100 to-indigo-100 p-4 rounded-xl">
+        <div class="flex justify-between items-center">
+         <div>
+          <h4 class="font-semibold text-gray-800">معدل الرضا</h4>
+          <p class="text-sm text-gray-600">متوسط تقييمات المتدربين</p>
+         </div>
+         <div class="text-2xl font-bold text-blue-600">
+          4.7/5
+         </div>
+        </div>
+       </div>
+       <div class="bg-gradient-to-r from-purple-100 to-pink-100 p-4 rounded-xl">
+        <div class="flex justify-between items-center">
+         <div>
+          <h4 class="font-semibold text-gray-800">معدل الإكمال</h4>
+          <p class="text-sm text-gray-600">نسبة إتمام البرامج</p>
+         </div>
+         <div class="text-2xl font-bold text-purple-600">
+          89%
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Revenue Analytics -->
+     <div class="dashboard-widget">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center"><i class="fas fa-chart-pie text-yellow-500 ml-3"></i> تحليل الإيرادات</h3>
+      <div class="space-y-4">
+       <div class="bg-gradient-to-r from-yellow-100 to-orange-100 p-4 rounded-xl">
+        <div class="flex justify-between items-center">
+         <div>
+          <h4 class="font-semibold text-gray-800">الإيرادات الشهرية</h4>
+          <p class="text-sm text-gray-600">إجمالي هذا الشهر</p>
+         </div>
+         <div class="text-2xl font-bold text-orange-600" id="monthly-revenue">
+          0 ريال
+         </div>
+        </div>
+       </div>
+       <div class="bg-gradient-to-r from-teal-100 to-cyan-100 p-4 rounded-xl">
+        <div class="flex justify-between items-center">
+         <div>
+          <h4 class="font-semibold text-gray-800">متوسط سعر البرنامج</h4>
+          <p class="text-sm text-gray-600">السعر المتوسط للبرامج</p>
+         </div>
+         <div class="text-2xl font-bold text-teal-600" id="avg-price">
+          0 ريال
+         </div>
+        </div>
+       </div>
+       <div class="bg-gradient-to-r from-rose-100 to-pink-100 p-4 rounded-xl">
+        <div class="flex justify-between items-center">
+         <div>
+          <h4 class="font-semibold text-gray-800">أعلى فئة ربحاً</h4>
+          <p class="text-sm text-gray-600">الفئة الأكثر إيراداً</p>
+         </div>
+         <div class="text-lg font-bold text-rose-600" id="top-category">
+          تقني
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div><!-- Detailed Analytics -->
+    <div class="dashboard-widget">
+     <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center"><i class="fas fa-analytics text-indigo-500 ml-3"></i> تحليلات مفصلة</h3>
+     <div class="grid lg:grid-cols-3 gap-6">
+      <div class="space-y-4">
+       <h4 class="font-semibold text-gray-800">أداء الفئات</h4>
+       <div id="category-performance" class="space-y-2"><!-- Category performance will be rendered here -->
+       </div>
+      </div>
+      <div class="space-y-4">
+       <h4 class="font-semibold text-gray-800">أداء المدربين</h4>
+       <div id="instructor-performance" class="space-y-2"><!-- Instructor performance will be rendered here -->
+       </div>
+      </div>
+      <div class="space-y-4">
+       <h4 class="font-semibold text-gray-800">التوزيع الزمني</h4>
+       <div id="time-distribution" class="space-y-2"><!-- Time distribution will be rendered here -->
+       </div>
+      </div>
+     </div>
+    </div><!-- Predictive Analytics -->
+    <div class="dashboard-widget">
+     <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center"><i class="fas fa-crystal-ball text-purple-500 ml-3"></i> التحليلات التنبؤية</h3>
+     <div class="grid md:grid-cols-2 gap-6">
+      <div class="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 rounded-2xl">
+       <h4 class="font-semibold text-gray-800 mb-4">توقعات الشهر القادم</h4>
+       <div class="space-y-3">
+        <div class="flex justify-between"><span class="text-gray-600">متدربين متوقعين:</span> <span class="font-bold text-indigo-600" id="predicted-participants">0</span>
+        </div>
+        <div class="flex justify-between"><span class="text-gray-600">إيرادات متوقعة:</span> <span class="font-bold text-indigo-600" id="predicted-revenue">0 ريال</span>
+        </div>
+        <div class="flex justify-between"><span class="text-gray-600">برامج مقترحة:</span> <span class="font-bold text-indigo-600" id="suggested-programs">0</span>
+        </div>
+       </div>
+      </div>
+      <div class="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-2xl">
+       <h4 class="font-semibold text-gray-800 mb-4">توصيات ذكية</h4>
+       <div id="smart-recommendations" class="space-y-2"><!-- Smart recommendations will be rendered here -->
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- Settings Tab -->
+   <div id="settings-tab" class="tab-content hidden">
+    <div class="grid lg:grid-cols-2 gap-8"><!-- AI Smart Features -->
+     <div class="dashboard-widget">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center"><i class="fas fa-brain text-purple-500 ml-3"></i> الميزات الذكية</h3>
+      <div class="space-y-4">
+       <div class="flex items-center justify-between">
+        <div><span class="text-gray-700 font-medium">التوصيات الذكية للبرامج</span>
+         <p class="text-sm text-gray-500">اقتراح برامج مناسبة للمتدربين</p>
+        </div><label class="switch"> <input type="checkbox" checked> <span class="slider"></span> </label>
+       </div>
+       <div class="flex items-center justify-between">
+        <div><span class="text-gray-700 font-medium">التنبؤ بالإقبال</span>
+         <p class="text-sm text-gray-500">توقع عدد المتدربين المحتملين</p>
+        </div><label class="switch"> <input type="checkbox" checked> <span class="slider"></span> </label>
+       </div>
+       <div class="flex items-center justify-between">
+        <div><span class="text-gray-700 font-medium">تحليل الأداء التلقائي</span>
+         <p class="text-sm text-gray-500">تقارير أداء تلقائية أسبوعية</p>
+        </div><label class="switch"> <input type="checkbox"> <span class="slider"></span> </label>
+       </div>
+       <div class="flex items-center justify-between">
+        <div><span class="text-gray-700 font-medium">تحسين الجدولة الذكية</span>
+         <p class="text-sm text-gray-500">اقتراح أفضل أوقات للبرامج</p>
+        </div><label class="switch"> <input type="checkbox" checked> <span class="slider"></span> </label>
+       </div>
+      </div>
+     </div><!-- System Settings -->
+     <div class="dashboard-widget">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center"><i class="fas fa-cog text-blue-500 ml-3"></i> إعدادات النظام</h3>
+      <div class="space-y-4">
+       <div><label class="block text-sm font-medium text-gray-700 mb-2">اللغة الافتراضية</label> <select class="form-input w-full"> <option value="ar">العربية</option> <option value="en">English</option> </select>
+       </div>
+       <div><label class="block text-sm font-medium text-gray-700 mb-2">المنطقة الزمنية</label> <select class="form-input w-full"> <option value="Asia/Riyadh">الرياض (GMT+3)</option> <option value="Asia/Dubai">دبي (GMT+4)</option> <option value="Africa/Cairo">القاهرة (GMT+2)</option> </select>
+       </div>
+       <div><label class="block text-sm font-medium text-gray-700 mb-2">العملة</label> <select class="form-input w-full"> <option value="SAR">ريال سعودي</option> <option value="AED">درهم إماراتي</option> <option value="EGP">جنيه مصري</option> </select>
+       </div>
+       <div><label class="block text-sm font-medium text-gray-700 mb-2">حجم البيانات المعروضة</label> <select class="form-input w-full"> <option value="10">10 عناصر</option> <option value="25" selected>25 عنصر</option> <option value="50">50 عنصر</option> <option value="100">100 عنصر</option> </select>
+       </div>
+      </div>
+     </div><!-- Notification Settings -->
+     <div class="dashboard-widget">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center"><i class="fas fa-bell text-yellow-500 ml-3"></i> إعدادات التنبيهات</h3>
+      <div class="space-y-4">
+       <div class="flex items-center justify-between"><span class="text-gray-700">تنبيهات البرامج الجديدة</span> <label class="switch"> < input type="checkbox" checked> <span class="slider"></span> </label>
+       </div>
+       <div class="flex items-center justify-between"><span class="text-gray-700">تنبيهات المواعيد</span> <label class="switch"> < input type="checkbox" checked> <span class="slider"></span> </label>
+       </div>
+       <div class="flex items-center justify-between"><span class="text-gray-700">تنبيهات التقييمات</span> <label class="switch"> < input type="checkbox"> <span class="slider"></span> </label>
+       </div>
+      </div>
+     </div><!-- Backup & Export -->
+     <div class="dashboard-widget">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center"><i class="fas fa-download text-green-500 ml-3"></i> النسخ الاحتياطي والتصدير</h3>
+      <div class="space-y-4"><button onclick="exportData('excel')" class="w-full btn-success"> <i class="fas fa-file-excel ml-2"></i> تصدير إلى Excel </button> <button onclick="exportData('pdf')" class="w-full btn-primary"> <i class="fas fa-file-pdf ml-2"></i> تصدير تقرير PDF </button> <button onclick="backupData()" class="w-full btn-secondary"> <i class="fas fa-cloud-upload-alt ml-2"></i> إنشاء نسخة احتياطية </button>
+      </div>
+     </div><!-- Analytics -->
+     <div class="dashboard-widget">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center"><i class="fas fa-chart-line text-purple-500 ml-3"></i> تحليلات متقدمة</h3>
+      <div class="space-y-4">
+       <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-4 rounded-xl text-white">
+        <div class="text-2xl font-bold" id="monthly-growth">
+         +15%
+        </div>
+        <div class="text-sm opacity-90">
+         نمو شهري
+        </div>
+       </div>
+       <div class="bg-gradient-to-r from-green-500 to-teal-600 p-4 rounded-xl text-white">
+        <div class="text-2xl font-bold" id="satisfaction-rate">
+         4.8/5
+        </div>
+        <div class="text-sm opacity-90">
+         معدل الرضا
+        </div>
+       </div>
+       <div class="bg-gradient-to-r from-orange-500 to-red-600 p-4 rounded-xl text-white">
+        <div class="text-2xl font-bold" id="retention-rate">
+         92%
+        </div>
+        <div class="text-sm opacity-90">
+         معدل الاستبقاء
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </main><!-- Add Training Modal -->
+  <div id="add-training-modal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center z-50">
+   <div class="bg-white rounded-3xl p-8 max-w-4xl w-full mx-4 shadow-2xl max-h-full overflow-y-auto">
+  <div class="flex justify-between items-center mb-8">
+   <h2 class="text-3xl font-bold text-gray-800">إضافة برنامج تدريبي جديد</h2><button onclick="hideAddTrainingModal()" class="text-gray-400 hover:text-gray-600 text-3xl">×</button>
+  </div>
+  <form id="add-training-form" class="space-y-6">
+   <div class="grid md:grid-cols-2 gap-6">
+    <div><label class="block text-sm font-medium text-gray-700 mb-2">عنوان البرنامج</label> <input type="text" id="training-title" required class="form-input w-full" placeholder="مثال: دورة البرمجة المتقدمة">
+    </div>
+    <div><label class="block text-sm font-medium text-gray-700 mb-2">المدرب</label> <input type="text" id="training-instructor" required class="form-input w-full" placeholder="اسم المدرب">
+    </div>
+   </div>
+   <div><label class="block text-sm font-medium text-gray-700 mb-2">وصف البرنامج</label> <textarea id="training-description" required class="form-input w-full h-24" placeholder="وصف مفصل للبرنامج التدريبي..."></textarea>
+   </div>
+   <div class="grid md:grid-cols-3 gap-6">
+    <div><label class="block text-sm font-medium text-gray-700 mb-2">الفئة</label> <select id="training-category" required class="form-input w-full"> <option value="">اختر الفئة</option> <option value="technical">تقني</option> <option value="management">إداري</option> <option value="soft-skills">مهارات ناعمة</option> <option value="leadership">قيادة</option> <option value="sales">مبيعات</option> <option value="marketing">تسويق</option> </select>
+    </div>
+    <div><label class="block text-sm font-medium text-gray-700 mb-2">المستوى</label> <select id="training-level" required class="form-input w-full"> <option value="">اختر المستوى</option> <option value="beginner">مبتدئ</option> <option value="intermediate">متوسط</option> <option value="advanced">متقدم</option> <option value="expert">خبير</option> </select>
+    </div>
+    <div><label class="block text-sm font-medium text-gray-700 mb-2">المدة (ساعات)</label> <input type="number" id="training-duration" required class="form-input w-full" placeholder="24" min="1">
+    </div>
+   </div>
+   <div class="grid md:grid-cols-2 gap-6">
+    <div><label class="block text-sm font-medium text-gray-700 mb-2">تاريخ البداية</label> <input type="date" id="training-start-date" required class="form-input w-full">
+    </div>
+    <div><label class="block text-sm font-medium text-gray-700 mb-2">تاريخ النهاية</label> <input type="date" id="training-end-date" required class="form-input w-full">
+    </div>
+   </div>
+   <div class="grid md:grid-cols-3 gap-6">
+    <div><label class="block text-sm font-medium text-gray-700 mb-2">الحد الأقصى للمتدربين</label> <input type="number" id="training-max-participants" required class="form-input w-full" placeholder="20" min="1">
+    </div>
+    <div><label class="block text-sm font-medium text-gray-700 mb-2">الموقع</label> <input type="text" id="training-location" required class="form-input w-full" placeholder="قاعة التدريب الرئيسية">
+    </div>
+    <div><label class="block text-sm font-medium text-gray-700 mb-2">السعر</label> <input type="number" id="training-price" required class="form-input w-full" placeholder="1500" min="0">
+    </div>
+   </div>
+   <div><label class="block text-sm font-medium text-gray-700 mb-2">أهداف البرنامج</label> <textarea id="training-objectives" class="form-input w-full h-20" placeholder="الأهداف التعليمية للبرنامج..."></textarea>
+   </div>
+   <div><label class="block text-sm font-medium text-gray-700 mb-2">المتطلبات المسبقة</label> <textarea id="training-prerequisites" class="form-input w-full h-20" placeholder="المهارات أو المعرفة المطلوبة مسبقاً..."></textarea>
+   </div>
+   <div><label class="block text-sm font-medium text-gray-700 mb-2">المواد التدريبية</label> <textarea id="training-materials" class="form-input w-full h-20" placeholder="قائمة بالمواد والأدوات المطلوبة..."></textarea>
+   </div>
+   <div class="flex gap-4 pt-6"><button type="submit" id="save-training-btn" class="flex-1 btn-primary"> <span id="save-training-text">حفظ البرنامج</span>
+     <div id="save-training-spinner" class="loading-spinner hidden inline-block mr-2"></div></button> <button type="button" onclick="hideAddTrainingModal()" class="flex-1 btn-secondary"> إلغاء </button>
+   </div>
+  </form>
+   </div>
+  </div><!-- Training Details Modal -->
+  <div id="training-details-modal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center z-50">
+   <div class="bg-white rounded-3xl p-8 max-w-5xl w-full mx-4 shadow-2xl max-h-full overflow-y-auto">
+  <div id="training-details-content"><!-- Training details will be rendered here -->
+  </div>
+   </div>
+  </div><!-- Add Participant Modal -->
+  <div id="add-participant-modal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center z-50">
+   <div class="bg-white rounded-3xl p-8 max-w-2xl w-full mx-4 shadow-2xl">
+  <div class="flex justify-between items-center mb-8">
+   <h2 class="text-3xl font-bold text-gray-800">إضافة متدرب جديد</h2><button onclick="hideAddParticipantModal()" class="text-gray-400 hover:text-gray-600 text-3xl">×</button>
+  </div>
+  <form id="add-participant-form" class="space-y-6">
+   <div class="grid md:grid-cols-2 gap-6">
+    <div><label class="block text-sm font-medium text-gray-700 mb-2">الاسم الكامل</label> <input type="text" id="participant-name" required class="form-input w-full" placeholder="أحمد محمد علي">
+    </div>
+    <div><label class="block text-sm font-medium text-gray-700 mb-2">البريد الإلكتروني</label> <input type="email" id="participant-email" required class="form-input w-full" placeholder="ahmed@example.com">
+    </div>
+   </div>
+   <div class="grid md:grid-cols-2 gap-6">
+    <div><label class="block text-sm font-medium text-gray-700 mb-2">رقم الهاتف</label> <input type="tel" id="participant-phone" required class="form-input w-full" placeholder="05xxxxxxxx">
+    </div>
+    <div><label class="block text-sm font-medium text-gray-700 mb-2">المسمى الوظيفي</label> <input type="text" id="participant-job" class="form-input w-full" placeholder="مطور برمجيات">
+    </div>
+   </div>
+   <div><label class="block text-sm font-medium text-gray-700 mb-2">الشركة/المؤسسة</label> <input type="text" id="participant-company" class="form-input w-full" placeholder="شركة التقنية المتقدمة">
+   </div>
+   <div><label class="block text-sm font-medium text-gray-700 mb-2">البرنامج التدريبي</label> <select id="participant-training" required class="form-input w-full"> <option value="">اختر البرنامج التدريبي</option> <!-- Training options will be populated here --> </select>
+   </div>
+   <div><label class="block text-sm font-medium text-gray-700 mb-2">ملاحظات إضافية</label> <textarea id="participant-notes" class="form-input w-full h-20" placeholder="أي ملاحظات أو متطلبات خاصة..."></textarea>
+   </div>
+   <div class="flex gap-4 pt-6"><button type="submit" id="save-participant-btn" class="flex-1 btn-primary"> <span id="save-participant-text">إضافة المتدرب</span>
+     <div id="save-participant-spinner" class="loading-spinner hidden inline-block mr-2"></div></button> <button type="button" onclick="hideAddParticipantModal()" class="flex-1 btn-secondary"> إلغاء </button>
+   </div>
+  </form>
+   </div>
+  </div><!-- Notifications Panel -->
+  <div id="notifications-panel" class="fixed top-4 right-4 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 hidden z-50">
+   <div class="p-6">
+  <div class="flex justify-between items-center mb-4">
+   <h3 class="text-lg font-bold text-gray-800">التنبيهات</h3><button onclick="hideNotifications()" class="text-gray-400 hover:text-gray-600"> <i class="fas fa-times"></i> </button>
+  </div>
+  <div id="notifications-list" class="space-y-3 max-h-96 overflow-y-auto"><!-- Notifications will be rendered here -->
+  </div>
+   </div>
+  </div>
+  <script>
+    let trainings = [];
+    let currentView = 'grid';
+    let currentTab = 'dashboard';
+    let isLoading = false;
+    let currentDate = new Date();
+
+    const defaultConfig = {
+      system_title: "نظام إدارة التدريب المتقدم",
+      welcome_message: "إدارة شاملة وفعالة لجميع برامج التدريب",
+      add_training_text: "إضافة برنامج تدريبي جديد",
+      dashboard_title: "لوحة المعلومات"
+    };
+
+    // Data SDK Handler
+    const dataHandler = {
+      onDataChanged(data) {
+        trainings = data || [];
+        renderTrainings();
+        updateStats();
+        renderDashboard();
+        renderCalendar();
+        renderReports();
+        renderParticipants();
+      }
+    };
+
+    // Element SDK Configuration
+    async function onConfigChange(config) {
+      const systemTitle = config.system_title || defaultConfig.system_title;
+      const welcomeMessage = config.welcome_message || defaultConfig.welcome_message;
+      const addTrainingText = config.add_training_text || defaultConfig.add_training_text;
+      const dashboardTitle = config.dashboard_title || defaultConfig.dashboard_title;
+
+      document.getElementById('system-title').textContent = systemTitle;
+      document.getElementById('welcome-message').textContent = welcomeMessage;
+      document.getElementById('add-training-text').textContent = addTrainingText;
+      document.getElementById('dashboard-title').textContent = dashboardTitle;
+    }
+
+    // Initialize System
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Initialize Element SDK
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig: defaultConfig,
+          onConfigChange: onConfigChange,
+          mapToCapabilities: (config) => ({
+            recolorables: [],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ["system_title", config.system_title || defaultConfig.system_title],
+            ["welcome_message", config.welcome_message || defaultConfig.welcome_message],
+            ["add_training_text", config.add_training_text || defaultConfig.add_training_text],
+            ["dashboard_title", config.dashboard_title || defaultConfig.dashboard_title]
+          ])
+        });
+      }
+
+      // Initialize Data SDK
+      if (window.dataSdk) {
+        const initResult = await window.dataSdk.init(dataHandler);
+        if (!initResult.isOk) {
+          console.error("Failed to initialize data SDK");
+          showMessage('فشل في تهيئة النظام', 'error');
+        }
+      }
+
+      // Setup Event Listeners
+      setupEventListeners();
+            
+      // Initialize calendar
+      renderCalendar();
+    });
+
+    function setupEventListeners() {
+      document.getElementById('add-training-btn').addEventListener('click', showAddTrainingModal);
+      document.getElementById('add-training-form').addEventListener('submit', handleAddTraining);
+      document.getElementById('add-participant-form').addEventListener('submit', handleAddParticipant);
+      document.getElementById('category-filter').addEventListener('change', renderTrainings);
+      document.getElementById('status-filter').addEventListener('change', renderTrainings);
+      document.getElementById('level-filter').addEventListener('change', renderTrainings);
+      document.getElementById('grid-view-btn').addEventListener('click', () => setView('grid'));
+      document.getElementById('list-view-btn').addEventListener('click', () => setView('list'));
+      document.getElementById('prev-month').addEventListener('click', () => changeMonth(-1));
+      document.getElementById('next-month').addEventListener('click', () => changeMonth(1));
+    }
+
+    async function handleAddTraining(event) {
+      event.preventDefault();
+            
+      if (isLoading) return;
+
+      // Check data limit
+      if (trainings.length >= 999) {
+        showMessage('تم الوصول للحد الأقصى من البرامج (999). يرجى حذف بعض البرامج أولاً.', 'error');
+        return;
+      }
+
+      const title = document.getElementById('training-title').value.trim();
+      const description = document.getElementById('training-description').value.trim();
+      const category = document.getElementById('training-category').value;
+      const level = document.getElementById('training-level').value;
+      const duration = parseInt(document.getElementById('training-duration').value);
+      const instructor = document.getElementById('training-instructor').value.trim();
+      const startDate = document.getElementById('training-start-date').value;
+      const endDate = document.getElementById('training-end-date').value;
+      const maxParticipants = parseInt(document.getElementById('training-max-participants').value);
+      const location = document.getElementById('training-location').value.trim();
+      const price = parseFloat(document.getElementById('training-price').value);
+      const objectives = document.getElementById('training-objectives').value.trim();
+      const prerequisites = document.getElementById('training-prerequisites').value.trim();
+      const materials = document.getElementById('training-materials').value.trim();
+
+      if (!title || !description || !category || !level || !instructor || !startDate || !endDate || !location) {
+        showMessage('يرجى ملء جميع الحقول المطلوبة', 'error');
+        return;
+      }
+
+      if (new Date(startDate) >= new Date(endDate)) {
+        showMessage('تاريخ النهاية يجب أن يكون بعد تاريخ البداية', 'error');
+        return;
+      }
+
+      isLoading = true;
+      showLoadingState('save-training', true);
+
+      const now = new Date();
+      const start = new Date(startDate);
+      let status = 'upcoming';
+      if (start <= now) {
+        const end = new Date(endDate);
+        status = end >= now ? 'active' : 'completed';
+      }
+
+      const newTraining = {
+        id: generateId(),
+        type: 'training',
+        title: title,
+        description: description,
+        category: category,
+        level: level,
+        duration: duration,
+        instructor: instructor,
+        startDate: startDate,
+        endDate: endDate,
+        maxParticipants: maxParticipants,
+        currentParticipants: 0,
+        status: status,
+        location: location,
+        price: price,
+        objectives: objectives,
+        prerequisites: prerequisites,
+        materials: materials,
+        rating: 0,
+        completionRate: 0,
+        createdAt: new Date().toISOString(),
+        lastModified: new Date().toISOString()
+      };
+
+      try {
+        const result = await window.dataSdk.create(newTraining);
+        if (result.isOk) {
+          hideAddTrainingModal();
+          document.getElementById('add-training-form').reset();
+          showMessage('تم إنشاء البرنامج التدريبي بنجاح!', 'success');
+        } else {
+          showMessage('فشل في إنشاء البرنامج التدريبي', 'error');
+        }
+      } catch (error) {
+        console.error('Error adding training:', error);
+        showMessage('حدث خطأ أثناء إنشاء البرنامج التدريبي', 'error');
+      } finally {
+        isLoading = false;
+        showLoadingState('save-training', false);
+      }
+    }
+
+    function renderTrainings() {
+      const container = document.getElementById('trainings-container');
+      const emptyState = document.getElementById('empty-state');
+            
+      // Apply filters
+      const categoryFilter = document.getElementById('category-filter').value;
+      const statusFilter = document.getElementById('status-filter').value;
+      const levelFilter = document.getElementById('level-filter').value;
+            
+      let filteredTrainings = trainings.filter(training => {
+        const matchesCategory = !categoryFilter || training.category === categoryFilter;
+        const matchesStatus = !statusFilter || training.status === statusFilter;
+        const matchesLevel = !levelFilter || training.level === levelFilter;
+        return matchesCategory && matchesStatus && matchesLevel;
+      });
+
+      if (filteredTrainings.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+            
+      // Update container class based on view
+      container.className = currentView === 'grid' ? 'training-grid' : 'training-list';
+
+      container.innerHTML = filteredTrainings.map(training => 
+        currentView === 'grid' ? renderTrainingCard(training) : renderTrainingListItem(training)
+      ).join('');
+    }
+
+    function renderTrainingCard(training) {
+      const statusClass = `status-${training.status}`;
+      const levelClass = `level-${training.level}`;
+      const progressPercentage = training.maxParticipants > 0 ? 
+        (training.currentParticipants / training.maxParticipants) * 100 : 0;
+            
+      return `
+        <div class="training-card rounded-3xl p-8 shadow-lg border border-gray-100">
+          <div class="flex justify-between items-start mb-6">
+            <div class="flex gap-3">
+              <span class="category-badge">${getCategoryName(training.category)}</span>
+              <span class="level-badge ${levelClass} px-3 py-1 rounded-full text-xs font-semibold">${getLevelName(training.level)}</span>
+            </div>
+            <span class="status-badge ${statusClass} px-3 py-1 rounded-full text-xs font-semibold">${getStatusName(training.status)}</span>
+          </div>
+                    
+          <h3 class="text-2xl font-bold text-gray-800 mb-3">${training.title}</h3>
+          <p class="text-gray-600 text-sm mb-4 line-clamp-3">${training.description}</p>
+                    
+          <div class="space-y-3 mb-6">
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+              <i class="fas fa-user-tie text-blue-500"></i>
+              <span>${training.instructor}</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+              <i class="fas fa-clock text-green-500"></i>
+              <span>${training.duration} ساعة</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+              <i class="fas fa-calendar text-purple-500"></i>
+              <span>${formatDate(training.startDate)} - ${formatDate(training.endDate)}</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+              <i class="fas fa-map-marker-alt text-red-500"></i>
+              <span>${training.location}</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+              <i class="fas fa-dollar-sign text-yellow-500"></i>
+              <span>${training.price} ريال</span>
+            </div>
+          </div>
+                    
+          <div class="mb-4">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm text-gray-600">المتدربين</span>
+              <span class="text-sm font-semibold">${training.currentParticipants}/${training.maxParticipants}</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+            </div>
+          </div>
+                    
+          ${training.rating > 0 ? `
+            <div class="flex items-center gap-2 mb-4">
+              <div class="rating-stars">
+                ${generateStars(training.rating)}
+              </div>
+              <span class="text-sm text-gray-600">(${training.rating}/5)</span>
+            </div>
+          ` : ''}
+                    
+          <div class="flex gap-2">
+            <button onclick="showTrainingDetails('${training.__backendId}')" class="flex-1 btn-primary text-sm">
+              <i class="fas fa-eye ml-1"></i>
+              عرض التفاصيل
+            </button>
+            <button onclick="editTraining('${training.__backendId}')" class="btn-secondary text-sm">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button onclick="deleteTraining('${training.__backendId}')" class="btn-danger text-sm">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderTrainingListItem(training) {
+      const statusClass = `status-${training.status}`;
+      const levelClass = `level-${training.level}`;
+      const progressPercentage = training.maxParticipants > 0 ? 
+        (training.currentParticipants / training.maxParticipants) * 100 : 0;
+            
+      return `
+        <div class="training-card rounded-2xl p-6 shadow-lg border border-gray-100 flex items-center gap-6">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-3">
+              <h3 class="text-xl font-bold text-gray-800">${training.title}</h3>
+              <span class="category-badge">${getCategoryName(training.category)}</span>
+              <span class="level-badge ${levelClass} px-3 py-1 rounded-full text-xs font-semibold">${getLevelName(training.level)}</span>
+              <span class="status-badge ${statusClass} px-3 py-1 rounded-full text-xs font-semibold">${getStatusName(training.status)}</span>
+            </div>
+            <p class="text-gray-600 text-sm mb-3">${training.description}</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+              <div class="flex items-center gap-2">
+                <i class="fas fa-user-tie text-blue-500"></i>
+                <span>${training.instructor}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i class="fas fa-clock text-green-500"></i>
+                <span>${training.duration} ساعة</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i class="fas fa-users text-purple-500"></i>
+                <span>${training.currentParticipants}/${training.maxParticipants}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i class="fas fa-dollar-sign text-yellow-500"></i>
+                <span>${training.price} ريال</span>
+              </div>
+            </div>
+          </div>
+                    
+          <div class="flex gap-2">
+            <button onclick="showTrainingDetails('${training.__backendId}')" class="btn-primary text-sm">
+              <i class="fas fa-eye ml-1"></i>
+              عرض
+            </button>
+            <button onclick="editTraining('${training.__backendId}')" class="btn-secondary text-sm">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button onclick="deleteTraining('${training.__backendId}')" class="btn-danger text-sm">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function showTrainingDetails(trainingId) {
+      const training = trainings.find(t => t.__backendId === trainingId);
+      if (!training) return;
+
+      const modal = document.getElementById('training-details-modal');
+      const content = document.getElementById('training-details-content');
+            
+      const statusClass = `status-${training.status}`;
+      const levelClass = `level-${training.level}`;
+      const progressPercentage = training.maxParticipants > 0 ? 
+        (training.currentParticipants / training.maxParticipants) * 100 : 0;
+            
+      content.innerHTML = `
+        <div class="flex justify-between items-center mb-8">
+          <h2 class="text-3xl font-bold text-gray-800">${training.title}</h2>
+          <button onclick="hideTrainingDetails()" class="text-gray-400 hover:text-gray-600 text-3xl">×</button>
+        </div>
+                
+        <div class="flex gap-3 mb-6">
+          <span class="category-badge">${getCategoryName(training.category)}</span>
+          <span class="level-badge ${levelClass} px-3 py-1 rounded-full text-xs font-semibold">${getLevelName(training.level)}</span>
+          <span class="status-badge ${statusClass} px-3 py-1 rounded-full text-xs font-semibold">${getStatusName(training.status)}</span>
+        </div>
+                
+        <div class="grid lg:grid-cols-2 gap-8 mb-8">
+          <div>
+            <h3 class="font-semibold text-gray-800 mb-3 flex items-center">
+              <i class="fas fa-info-circle text-blue-500 ml-2"></i>
+              معلومات عامة
+            </h3>
+            <div class="bg-gray-50 p-6 rounded-2xl space-y-4">
+              <div class="flex items-center gap-3">
+                <i class="fas fa-user-tie text-blue-500"></i>
+                <div>
+                  <span class="text-sm text-gray-600">المدرب:</span>
+                  <p class="font-semibold">${training.instructor}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <i class="fas fa-clock text-green-500"></i>
+                <div>
+                  <span class="text-sm text-gray-600">المدة:</span>
+                  <p class="font-semibold">${training.duration} ساعة</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <i class="fas fa-map-marker-alt text-red-500"></i>
+                <div>
+                  <span class="text-sm text-gray-600">الموقع:</span>
+                  <p class="font-semibold">${training.location}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <i class="fas fa-dollar-sign text-yellow-500"></i>
+                <div>
+                  <span class="text-sm text-gray-600">السعر:</span>
+                  <p class="font-semibold">${training.price} ريال</p>
+                </div>
+              </div>
+            </div>
+          </div>
+                    
+          <div>
+            <h3 class="font-semibold text-gray-800 mb-3 flex items-center">
+              <i class="fas fa-calendar text-purple-500 ml-2"></i>
+              التواريخ والمشاركة
+            </h3>
+            <div class="bg-gray-50 p-6 rounded-2xl space-y-4">
+              <div>
+                <span class="text-sm text-gray-600">تاريخ البداية:</span>
+                <p class="font-semibold">${formatDate(training.startDate)}</p>
+              </div>
+              <div>
+                <span class="text-sm text-gray-600">تاريخ النهاية:</span>
+                <p class="font-semibold">${formatDate(training.endDate)}</p>
+              </div>
+              <div>
+                <span class="text-sm text-gray-600">المتدربين:</span>
+                <div class="flex justify-between items-center mt-2">
+                  <span class="font-semibold">${training.currentParticipants}/${training.maxParticipants}</span>
+                  <span class="text-sm text-gray-600">${progressPercentage.toFixed(0)}%</span>
+                </div>
+                <div class="progress-bar mt-2">
+                  <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+                
+        <div class="mb-6">
+          <h3 class="font-semibold text-gray-800 mb-3 flex items-center">
+            <i class="fas fa-align-right text-indigo-500 ml-2"></i>
+            وصف البرنامج
+          </h3>
+          <div class="bg-gray-50 p-6 rounded-2xl">
+            <p class="text-gray-700 leading-relaxed">${training.description}</p>
+          </div>
+        </div>
+                
+        ${training.objectives ? `
+          <div class="mb-6">
+            <h3 class="font-semibold text-gray-800 mb-3 flex items-center">
+              <i class="fas fa-bullseye text-green-500 ml-2"></i>
+              أهداف البرنامج
+            </h3>
+            <div class="bg-gray-50 p-6 rounded-2xl">
+              <p class="text-gray-700 leading-relaxed">${training.objectives}</p>
+            </div>
+          </div>
+        ` : ''}
+                
+        ${training.prerequisites ? `
+          <div class="mb-6">
+            <h3 class="font-semibold text-gray-800 mb-3 flex items-center">
+              <i class="fas fa-list-check text-orange-500 ml-2"></i>
+              المتطلبات المسبقة
+            </h3>
+            <div class="bg-gray-50 p-6 rounded-2xl">
+              <p class="text-gray-700 leading-relaxed">${training.prerequisites}</p>
+            </div>
+          </div>
+        ` : ''}
+                
+        ${training.materials ? `
+          <div class="mb-6">
+            <h3 class="font-semibold text-gray-800 mb-3 flex items-center">
+              <i class="fas fa-box text-purple-500 ml-2"></i>
+              المواد التدريبية
+            </h3>
+            <div class="bg-gray-50 p-6 rounded-2xl">
+              <p class="text-gray-700 leading-relaxed">${training.materials}</p>
+            </div>
+          </div>
+        ` : ''}
+                
+        <div class="grid grid-cols-2 gap-4 mb-8 text-sm">
+          <div>
+            <h4 class="font-semibold text-gray-800">تاريخ الإنشاء:</h4>
+            <p class="text-gray-600">📅 ${formatDateTime(training.createdAt)}</p>
+          </div>
+          <div>
+            <h4 class="font-semibold text-gray-800">آخر تعديل:</h4>
+            <p class="text-gray-600">✏️ ${formatDateTime(training.lastModified)}</p>
+          </div>
+        </div>
+                
+        <div class="flex gap-4">
+          <button onclick="editTraining('${training.__backendId}'); hideTrainingDetails();" class="flex-1 btn-primary">
+            <i class="fas fa-edit ml-2"></i>
+            تعديل البرنامج
+          </button>
+          <button onclick="addParticipant('${training.__backendId}')" class="flex-1 btn-success">
+            <i class="fas fa-user-plus ml-2"></i>
+            إضافة متدرب
+          </button>
+          <button onclick="hideTrainingDetails()" class="flex-1 btn-secondary">
+            إغلاق
+          </button>
+        </div>
+      `;
+            
+      modal.classList.remove('hidden');
+    }
+
+    async function addParticipant(trainingId) {
+      const training = trainings.find(t => t.__backendId === trainingId);
+      if (!training) return;
+
+      if (training.currentParticipants >= training.maxParticipants) {
+        showMessage('تم الوصول للحد الأقصى من المتدربين', 'error');
+        return;
+      }
+
+      training.currentParticipants += 1;
+      training.lastModified = new Date().toISOString();
+
+      try {
+        const result = await window.dataSdk.update(training);
+        if (result.isOk) {
+          showMessage('تم إضافة متدرب جديد بنجاح!', 'success');
+        } else {
+          showMessage('فشل في إضافة المتدرب', 'error');
+        }
+      } catch (error) {
+        console.error('Error adding participant:', error);
+        showMessage('حدث خطأ أثناء إضافة المتدرب', 'error');
+      }
+    }
+
+    async function deleteTraining(trainingId) {
+      const training = trainings.find(t => t.__backendId === trainingId);
+      if (!training) return;
+
+      // Show inline confirmation
+      const confirmBtn = event.target.closest('button');
+      const originalHTML = confirmBtn.innerHTML;
+            
+      confirmBtn.innerHTML = '<i class="fas fa-check ml-1"></i>تأكيد الحذف';
+      confirmBtn.classList.remove('btn-danger');
+      confirmBtn.classList.add('btn-danger');
+            
+      // Create cancel button
+      const cancelBtn = document.createElement('button');
+      cancelBtn.innerHTML = '<i class="fas fa-times"></i>';
+      cancelBtn.className = 'btn-secondary text-sm';
+      cancelBtn.onclick = () => {
+        confirmBtn.innerHTML = originalHTML;
+        confirmBtn.className = 'btn-danger text-sm';
+        cancelBtn.remove();
+        confirmBtn.onclick = () => deleteTraining(trainingId);
+      };
+            
+      confirmBtn.parentNode.insertBefore(cancelBtn, confirmBtn.nextSibling);
+            
+      confirmBtn.onclick = async () => {
+        try {
+          const result = await window.dataSdk.delete(training);
+          if (result.isOk) {
+            showMessage(`تم حذف البرنامج "${training.title}" بنجاح`, 'success');
+          } else {
+            showMessage('فشل في حذف البرنامج', 'error');
+          }
+        } catch (error) {
+          console.error('Error deleting training:', error);
+          showMessage('حدث خطأ أثناء حذف البرنامج', 'error');
+        }
+      };
+    }
+
+    function editTraining(trainingId) {
+      const training = trainings.find(t => t.__backendId === trainingId);
+      if (!training) return;
+
+      // Fill form with existing data
+      document.getElementById('training-title').value = training.title;
+      document.getElementById('training-description').value = training.description;
+      document.getElementById('training-category').value = training.category;
+      document.getElementById('training-level').value = training.level;
+      document.getElementById('training-duration').value = training.duration;
+      document.getElementById('training-instructor').value = training.instructor;
+      document.getElementById('training-start-date').value = training.startDate;
+      document.getElementById('training-end-date').value = training.endDate;
+      document.getElementById('training-max-participants').value = training.maxParticipants;
+      document.getElementById('training-location').value = training.location;
+      document.getElementById('training-price').value = training.price;
+      document.getElementById('training-objectives').value = training.objectives || '';
+      document.getElementById('training-prerequisites').value = training.prerequisites || '';
+      document.getElementById('training-materials').value = training.materials || '';
+
+      // Change form to edit mode
+      document.getElementById('save-training-text').textContent = 'تحديث البرنامج';
+      document.getElementById('add-training-form').dataset.editId = trainingId;
+            
+      showAddTrainingModal();
+    }
+
+    function renderDashboard() {
+      renderRecentTrainings();
+      renderUpcomingEvents();
+      renderPerformanceMetrics();
+    }
+
+    function renderRecentTrainings() {
+      const container = document.getElementById('recent-trainings');
+      const recentTrainings = trainings
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 5);
+
+      if (recentTrainings.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center py-8">لا توجد برامج تدريبية حديثة</p>';
+        return;
+      }
+
+      container.innerHTML = recentTrainings.map(training => `
+        <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer" onclick="showTrainingDetails('${training.__backendId}')">
+          <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white">
+            <i class="fas fa-book-open"></i>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-semibold text-gray-800">${training.title}</h4>
+            <p class="text-sm text-gray-600">${training.instructor} • ${formatDate(training.startDate)}</p>
+          </div>
+          <span class="status-badge status-${training.status} px-2 py-1 rounded-lg text-xs">${getStatusName(training.status)}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderUpcomingEvents() {
+      const container = document.getElementById('upcoming-events');
+      const upcomingTrainings = trainings
+        .filter(t => t.status === 'upcoming' || t.status === 'active')
+        .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
+        .slice(0, 5);
+
+      if (upcomingTrainings.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center py-8">لا توجد أحداث قادمة</p>';
+        return;
+      }
+
+      container.innerHTML = upcomingTrainings.map(training => `
+        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+          <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center text-white text-sm">
+            ${new Date(training.startDate).getDate()}
+          </div>
+          <div class="flex-1">
+            <h5 class="font-semibold text-gray-800 text-sm">${training.title}</h5>
+            <p class="text-xs text-gray-600">${formatDate(training.startDate)} • ${training.location}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderPerformanceMetrics() {
+      const container = document.getElementById('performance-metrics');
+            
+      const totalRevenue = trainings.reduce((sum, t) => sum + (t.price * t.currentParticipants), 0);
+      const avgRating = trainings.length > 0 ? 
+        trainings.reduce((sum, t) => sum + t.rating, 0) / trainings.length : 0;
+      const completedTrainings = trainings.filter(t => t.status === 'completed').length;
+
+      container.innerHTML = `
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-gradient-to-br from-green-500 to-emerald-600 p-4 rounded-xl text-white text-center">
+            <div class="text-2xl font-bold">${totalRevenue.toLocaleString()}</div>
+            <div class="text-sm opacity-90">إجمالي الإيرادات (ريال)</div>
+          </div>
+          <div class="bg-gradient-to-br from-yellow-500 to-orange-600 p-4 rounded-xl text-white text-center">
+            <div class="text-2xl font-bold">${avgRating.toFixed(1)}</div>
+            <div class="text-sm opacity-90">متوسط التقييم</div>
+          </div>
+          <div class="bg-gradient-to-br from-purple-500 to-indigo-600 p-4 rounded-xl text-white text-center">
+            <div class="text-2xl font-bold">${completedTrainings}</div>
+            <div class="text-sm opacity-90">برامج مكتملة</div>
+          </div>
+          <div class="bg-gradient-to-br from-pink-500 to-rose-600 p-4 rounded-xl text-white text-center">
+            <div class="text-2xl font-bold">${trainings.length > 0 ? ((completedTrainings / trainings.length) * 100).toFixed(0) : 0}%</div>
+            <div class="text-sm opacity-90">معدل الإكمال</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCalendar() {
+      const container = document.getElementById('calendar-container');
+      const monthNames = [
+        'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', ' يونيو',
+        'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+      ];
+            
+      document.getElementById('current-month').textContent = 
+        `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+
+      const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+      const daysInMonth = lastDay.getDate();
+      const startingDayOfWeek = firstDay.getDay();
+
+      let calendarHTML = `
+        <div class="calendar-grid">
+          <div class="calendar-day bg-gray-100 font-semibold text-center">الأحد</div>
+          <div class="calendar-day bg-gray-100 font-semibold text-center">الاثنين</div>
+          <div class="calendar-day bg-gray-100 font-semibold text-center">الثلاثاء</div>
+          <div class="calendar-day bg-gray-100 font-semibold text-center">الأربعاء</div>
+          <div class="calendar-day bg-gray-100 font-semibold text-center">الخميس</div>
+          <div class="calendar-day bg-gray-100 font-semibold text-center">الجمعة</div>
+          <div class="calendar-day bg-gray-100 font-semibold text-center">السبت</div>
+      `;
+
+      // Empty cells for days before the first day of the month
+      for (let i = 0; i < startingDayOfWeek; i++) {
+        calendarHTML += '<div class="calendar-day"></div>';
+      }
+
+      // Days of the month
+      for (let day = 1; day <= daysInMonth; day++) {
+        const currentDateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayTrainings = trainings.filter(t => 
+          t.startDate <= currentDateStr && t.endDate >= currentDateStr
+        );
+
+        calendarHTML += `
+          <div class="calendar-day">
+            <div class="font-semibold mb-2">${day}</div>
+            ${dayTrainings.map(training => `
+              <div class="calendar-event" onclick="showTrainingDetails('${training.__backendId}')" title="${training.title}">
+                ${training.title.substring(0, 15)}${training.title.length > 15 ? '...' : ''}
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      calendarHTML += '</div>';
+      container.innerHTML = calendarHTML;
+    }
+
+    function changeMonth(direction) {
+      currentDate.setMonth(currentDate.getMonth() + direction);
+      renderCalendar();
+    }
+
+    function renderReports() {
+      const container = document.getElementById('detailed-report');
+            
+      const categoryStats = {};
+      const levelStats = {};
+      const statusStats = {};
+
+      trainings.forEach(training => {
+        categoryStats[training.category] = (categoryStats[training.category] || 0) + 1;
+        levelStats[training.level] = (levelStats[training.level] || 0) + 1;
+        statusStats[training.status] = (statusStats[training.status] || 0) + 1;
+      });
+
+      container.innerHTML = `
+        <div class="grid md:grid-cols-3 gap-6">
+          <div>
+            <h4 class="font-semibold text-gray-800 mb-4">توزيع الفئات</h4>
+            <div class="space-y-2">
+              ${Object.entries(categoryStats).map(([category, count]) => `
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                  <span>${getCategoryName(category)}</span>
+                  <span class="font-semibold">${count}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+                    
+          <div>
+            <h4 class="font-semibold text-gray-800 mb-4">توزيع المستويات</h4>
+            <div class="space-y-2">
+              ${Object.entries(levelStats).map(([level, count]) => `
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                  <span>${getLevelName(level)}</span>
+                  <span class="font-semibold">${count}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+                    
+          <div>
+            <h4 class="font-semibold text-gray-800 mb-4">توزيع الحالات</h4>
+            <div class="space-y-2">
+              ${Object.entries(statusStats).map(([status, count]) => `
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                  <span>${getStatusName(status)}</span>
+                  <span class="font-semibold">${count}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderParticipants() {
+      const container = document.getElementById('participants-list');
+            
+      const participantData = trainings.map(training => ({
+        trainingTitle: training.title,
+        instructor: training.instructor,
+        currentParticipants: training.currentParticipants,
+        maxParticipants: training.maxParticipants,
+        status: training.status
+      }));
+
+      if (participantData.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center py-8">لا توجد بيانات متدربين</p>';
+        return;
+      }
+
+      container.innerHTML = participantData.map(data => `
+        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+          <div>
+            <h4 class="font-semibold text-gray-800">${data.trainingTitle}</h4>
+            <p class="text-sm text-gray-600">المدرب: ${data.instructor}</p>
+          </div>
+          <div class="text-left">
+            <div class="text-lg font-bold text-gray-800">${data.currentParticipants}/${data.maxParticipants}</div>
+            <div class="text-sm text-gray-600">متدرب</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function switchTab(tabName) {
+      currentTab = tabName;
+            
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+      });
+            
+      // Show selected tab
+      document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+            
+      // Update nav buttons
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.classList.remove('active');
+      });
+            
+      event.target.classList.add('active');
+    }
+
+    function updateStats() {
+      const totalTrainings = trainings.length;
+      const activeTrainings = trainings.filter(t => t.status === 'active').length;
+      const totalParticipants = trainings.reduce((sum, t) => sum + t.currentParticipants, 0);
+      const completedTrainings = trainings.filter(t => t.status === 'completed').length;
+      const completionRate = totalTrainings > 0 ? Math.round((completedTrainings / totalTrainings) * 100) : 0;
+
+      document.getElementById('total-trainings').textContent = totalTrainings;
+      document.getElementById('active-trainings').textContent = activeTrainings;
+      document.getElementById('total-participants').textContent = totalParticipants;
+      document.getElementById('completion-rate').textContent = `${completionRate}%`;
+    }
+
+    function setView(view) {
+      currentView = view;
+            
+      // Update button states
+      const gridBtn = document.getElementById('grid-view-btn');
+      const listBtn = document.getElementById('list-view-btn');
+            
+      if (view === 'grid') {
+        gridBtn.classList.add('bg-blue-100', 'text-blue-600');
+        gridBtn.classList.remove('bg-gray-100', 'text-gray-600');
+        listBtn.classList.add('bg-gray-100', 'text-gray-600');
+        listBtn.classList.remove('bg-blue-100', 'text-blue-600');
+      } else {
+        listBtn.classList.add('bg-blue-100', 'text-blue-600');
+        listBtn.classList.remove('bg-gray-100', 'text-gray-600');
+        gridBtn.classList.add('bg-gray-100', 'text-gray-600');
+        gridBtn.classList.remove('bg-blue-100', 'text-blue-600');
+      }
+            
+      renderTrainings();
+    }
+
+    function showAddTrainingModal() {
+      document.getElementById('add-training-modal').classList.remove('hidden');
+    }
+
+    function hideAddTrainingModal() {
+      document.getElementById('add-training-modal').classList.add('hidden');
+      document.getElementById('add-training-form').reset();
+      document.getElementById('save-training-text').textContent = 'حفظ البرنامج';
+      delete document.getElementById('add-training-form').dataset.editId;
+    }
+
+    function hideTrainingDetails() {
+      document.getElementById('training-details-modal').classList.add('hidden');
+    }
+
+    function showLoadingState(buttonId, loading) {
+      const button = document.getElementById(`${buttonId}-btn`);
+      const spinner = document.getElementById(`${buttonId}-spinner`);
+      const text = document.getElementById(`${buttonId}-text`);
+            
+      if (loading) {
+        button.disabled = true;
+        spinner.classList.remove('hidden');
+        text.textContent = 'جاري الحفظ...';
+      } else {
+        button.disabled = false;
+        spinner.classList.add('hidden');
+        text.textContent = 'حفظ البرنامج';
+      }
+    }
+
+    function showMessage(message, type = 'success') {
+      // Create toast message
+      const toast = document.createElement('div');
+      toast.className = `fixed top-4 left-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 ${
+        type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+      }`;
+      toast.textContent = message;
+            
+      document.body.appendChild(toast);
+            
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Helper functions
+    function getCategoryName(category) {
+      const names = {
+        'technical': 'تقني',
+        'management': 'إداري',
+        'soft-skills': 'مهارات ناعمة',
+        'leadership': 'قيادة',
+        'sales': 'مبيعات',
+        'marketing': 'تسويق'
+      };
+      return names[category] || category;
+    }
+
+    function getLevelName(level) {
+      const names = {
+        'beginner': 'مبتدئ',
+        'intermediate': 'متوسط',
+        'advanced': 'متقدم',
+        'expert': 'خبير'
+      };
+      return names[level] || level;
+    }
+
+    function getStatusName(status) {
+      const names = {
+        'upcoming': 'قادم',
+        'active': 'نشط',
+        'completed': 'مكتمل',
+        'cancelled': 'ملغي'
+      };
+      return names[status] || status;
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('ar-SA');
+    }
+
+    function formatDateTime(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleString('ar-SA');
+    }
+
+    function generateStars(rating) {
+      let stars = '';
+      for (let i = 1; i <= 5; i++) {
+        stars += i <= rating ? '★' : '☆';
+      }
+      return stars;
+    }
+
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    // Participant Management Functions
+    function showAddParticipantModal() {
+      // Populate training options
+      const trainingSelect = document.getElementById('participant-training');
+      const availableTrainings = trainings.filter(t => 
+        t.status === 'upcoming' || t.status === 'active'
+      );
+            
+      trainingSelect.innerHTML = '<option value="">اختر البرنامج التدريبي</option>' +
+        availableTrainings.map(training => 
+          `<option value="${training.__backendId}">${training.title}</option>`
+        ).join('');
+            
+      document.getElementById('add-participant-modal').classList.remove('hidden');
+    }
+
+    function hideAddParticipantModal() {
+      document.getElementById('add-participant-modal').classList.add('hidden');
+      document.getElementById('add-participant-form').reset();
+    }
+
+    async function handleAddParticipant(event) {
+      event.preventDefault();
+            
+      if (isLoading) return;
+
+      const name = document.getElementById('participant-name').value.trim();
+      const email = document.getElementById('participant-email').value.trim();
+      const phone = document.getElementById('participant-phone').value.trim();
+      const job = document.getElementById('participant-job').value.trim();
+      const company = document.getElementById('participant-company').value.trim();
+      const trainingId = document.getElementById('participant-training').value;
+      const notes = document.getElementById('participant-notes').value.trim();
+
+      if (!name || !email || !phone || !trainingId) {
+        showMessage('يرجى ملء جميع الحقول المطلوبة', 'error');
+        return;
+      }
+
+      const training = trainings.find(t => t.__backendId === trainingId);
+      if (!training) {
+        showMessage('البرنامج التدريبي غير موجود', 'error');
+        return;
+      }
+
+      if (training.currentParticipants >= training.maxParticipants) {
+        showMessage('تم الوصول للحد الأقصى من المتدربين في هذا البرنامج', 'error');
+        return;
+      }
+
+      isLoading = true;
+      showLoadingState('save-participant', true);
+
+      try {
+        // Update training participant count
+        training.currentParticipants += 1;
+        training.lastModified = new Date().toISOString();
+
+        const result = await window.dataSdk.update(training);
+        if (result.isOk) {
+          hideAddParticipantModal();
+          showMessage(`تم تسجيل ${name} في برنامج "${training.title}" بنجاح!`, 'success');
+                    
+          // Add notification
+          addNotification(`تم تسجيل متدرب جديد: ${name} في برنامج ${training.title}`, 'success');
+        } else {
+          showMessage('فشل في تسجيل المتدرب', 'error');
+        }
+      } catch (error) {
+        console.error('Error adding participant:', error);
+        showMessage('حدث خطأ أثناء تسجيل المتدرب', 'error');
+      } finally {
+        isLoading = false;
+        showLoadingState('save-participant', false);
+      }
+    }
+
+    // Notifications System
+    let notifications = [];
+
+    function addNotification(message, type = 'info') {
+      const notification = {
+        id: generateId(),
+        message: message,
+        type: type,
+        timestamp: new Date().toISOString(),
+        read: false
+      };
+            
+      notifications.unshift(notification);
+      updateNotificationBadge();
+    }
+
+    function updateNotificationBadge() {
+      const badge = document.getElementById('notification-badge');
+      const unreadCount = notifications.filter(n => !n.read).length;
+            
+      if (unreadCount > 0) {
+        badge.textContent = unreadCount;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    function showNotifications() {
+      const panel = document.getElementById('notifications-panel');
+      const list = document.getElementById('notifications-list');
+            
+      if (notifications.length === 0) {
+        list.innerHTML = '<p class="text-gray-500 text-center py-4">لا توجد تنبيهات</p>';
+      } else {
+        list.innerHTML = notifications.map(notification => `
+          <div class="p-3 rounded-lg ${notification.read ? 'bg-gray-50' : 'bg-blue-50'} border-r-4 ${
+            notification.type === 'success' ? 'border-green-500' : 
+            notification.type === 'error' ? 'border-red-500' : 'border-blue-500'
+          }">
+            <p class="text-sm text-gray-800">${notification.message}</p>
+            <p class="text-xs text-gray-500 mt-1">${formatDateTime(notification.timestamp)}</p>
+          </div>
+        `).join('');
+                
+        // Mark all as read
+        notifications.forEach(n => n.read = true);
+        updateNotificationBadge();
+      }
+            
+      panel.classList.remove('hidden');
+    }
+
+    function hideNotifications() {
+      document.getElementById('notifications-panel').classList.add('hidden');
+    }
+
+    // Export Functions
+    function exportData(format) {
+      if (format === 'excel') {
+        exportToExcel();
+      } else if (format === 'pdf') {
+        exportToPDF();
+      }
+    }
+
+    function exportToExcel() {
+      const data = trainings.map(training => ({
+        'العنوان': training.title,
+        'المدرب': training.instructor,
+        'الفئة': getCategoryName(training.category),
+        'المستوى': getLevelName(training.level),
+        'المدة': training.duration + ' ساعة',
+        'تاريخ البداية': formatDate(training.startDate),
+        'تاريخ النهاية': formatDate(training.endDate),
+        'المتدربين': `${training.currentParticipants}/${training.maxParticipants}`,
+        'الحالة': getStatusName(training.status),
+        'السعر': training.price + ' ريال',
+        'الموقع': training.location
+      }));
+
+      // Create CSV content
+      const headers = Object.keys(data[0] || {});
+      const csvContent = [
+        headers.join(','),
+        ...data.map(row => headers.map(header => `"${row[header] || ''}"`).join(','))
+      ].join('\n');
+
+      // Download file
+      const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `training_data_${new Date().toISOString().split('T')[0]}.csv`;
+      link.click();
+            
+      showMessage('تم تصدير البيانات إلى Excel بنجاح!', 'success');
+    }
+
+    function exportToPDF() {
+      // Create a simple HTML report
+      const reportContent = `
+        <html dir="rtl">
+        <head>
+          <meta charset="UTF-8">
+          <title>تقرير البرامج التدريبية</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h1 { color: #3b82f6; text-align: center; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: right; }
+            th { background-color: #f8f9fa; }
+          </style>
+        </head>
+        <body>
+          <h1>تقرير البرامج التدريبية</h1>
+          <p>تاريخ التقرير: ${formatDate(new Date().toISOString())}</p>
+          <table>
+            <thead>
+              <tr>
+                <th>العنوان</th>
+                <th>المدرب</th>
+                <th>الفئة</th>
+                <th>المستوى</th>
+                <th>المدة</th>
+                <th>المتدربين</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${trainings.map(training => `
+                <tr>
+                  <td>${training.title}</td>
+                  <td>${training.instructor}</td>
+                  <td>${getCategoryName(training.category)}</td>
+                  <td>${getLevelName(training.level)}</td>
+                  <td>${training.duration} ساعة</td>
+                  <td>${training.currentParticipants}/${training.maxParticipants}</td>
+                  <td>${getStatusName(training.status)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </body>
+        </html>
+      `;
+
+      // Open in new window for printing
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(reportContent);
+      printWindow.document.close();
+      printWindow.print();
+            
+      showMessage('تم فتح تقرير PDF للطباعة!', 'success');
+    }
+
+    function backupData() {
+      const backupData = {
+        trainings: trainings,
+        timestamp: new Date().toISOString(),
+        version: '1.0'
+      };
+
+      const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `training_backup_${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+            
+      showMessage('تم إنشاء النسخة الاحتياطية بنجاح!', 'success');
+    }
+
+    // Certificates Management Functions
+    function generateCertificates() {
+      const completedTrainings = trainings.filter(t => t.status === 'completed');
+            
+      if (completedTrainings.length === 0) {
+        showMessage('لا توجد برامج مكتملة لإنشاء شهادات لها', 'error');
+        return;
+      }
+
+      let totalCertificates = 0;
+      completedTrainings.forEach(training => {
+        totalCertificates += training.currentParticipants;
+      });
+
+      showMessage(`تم إنشاء ${totalCertificates} شهادة بنجاح!`, 'success');
+      addNotification(`تم إنشاء ${totalCertificates} شهادة جديدة`, 'success');
+      renderCertificates();
+    }
+
+    function renderCertificates() {
+      const templatesContainer = document.getElementById('certificate-templates');
+      const listContainer = document.getElementById('certificates-list');
+            
+      // Certificate templates
+      const templates = [
+        { id: 1, name: 'قالب كلاسيكي', color: 'from-blue-500 to-indigo-600', icon: 'fas fa-scroll' },
+        { id: 2, name: 'قالب حديث', color: 'from-purple-500 to-pink-600', icon: 'fas fa-certificate' },
+        { id: 3, name: 'قالب أنيق', color: 'from-green-500 to-teal-600', icon: 'fas fa-award' }
+      ];
+
+      templatesContainer.innerHTML = templates.map(template => `
+        <div class="bg-gradient-to-br ${template.color} p-6 rounded-2xl text-white text-center cursor-pointer hover:scale-105 transition-transform">
+          <i class="${template.icon} text-3xl mb-3"></i>
+          <h4 class="font-bold">${template.name}</h4>
+          <p class="text-sm opacity-90 mt-2">انقر للاستخدام</p>
+        </div>
+      `).join('');
+
+      // Certificates list
+      const completedTrainings = trainings.filter(t => t.status === 'completed');
+            
+      if (completedTrainings.length === 0) {
+        listContainer.innerHTML = '<p class="text-gray-500 text-center py-8">لا توجد شهادات بعد</p>';
+        return;
+      }
+
+      listContainer.innerHTML = completedTrainings.map(training => `
+        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center text-white">
+              <i class="fas fa-certificate"></i>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800">${training.title}</h4>
+              <p class="text-sm text-gray-600">${training.currentParticipants} شهادة • ${formatDate(training.endDate)}</p>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="downloadCertificates('${training.__backendId}')" class="btn-success text-sm">
+              <i class="fas fa-download ml-1"></i>
+              تحميل
+            </button>
+            <button onclick="previewCertificate('${training.__backendId}')" class="btn-primary text-sm">
+              <i class="fas fa-eye ml-1"></i>
+              معاينة
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      // Update certificate stats
+      const totalCertificates = completedTrainings.reduce((sum, t) => sum + t.currentParticipants, 0);
+      document.getElementById('total-certificates').textContent = totalCertificates;
+      document.getElementById('issued-certificates').textContent = totalCertificates;
+      document.getElementById('pending-certificates').textContent = '0';
+    }
+
+    function downloadCertificates(trainingId) {
+      const training = trainings.find(t => t.__backendId === trainingId);
+      if (!training) return;
+
+      // Simulate certificate download
+      showMessage(`تم تحميل ${training.currentParticipants} شهادة لبرنامج "${training.title}"`, 'success');
+    }
+
+    function previewCertificate(trainingId) {
+      const training = trainings.find(t => t.__backendId === trainingId);
+      if (!training) return;
+
+      // Create certificate preview modal
+      const modal = document.createElement('div');
+      modal.className = 'fixed inset-0 modal-overlay flex items-center justify-center z-50';
+      modal.innerHTML = `
+        <div class="bg-white rounded-3xl p-8 max-w-2xl w-full mx-4 shadow-2xl">
+          <div class="text-center">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">معاينة الشهادة</h2>
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-100 p-8 rounded-2xl border-4 border-blue-200">
+              <div class="text-center">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">شهادة إتمام</h3>
+                <p class="text-lg text-gray-700 mb-4">هذا يشهد بأن</p>
+                <h4 class="text-3xl font-bold text-blue-900 mb-4">[اسم المتدرب]</h4>
+                <p class="text-lg text-gray-700 mb-4">قد أتم بنجاح برنامج</p>
+                <h5 class="text-2xl font-bold text-blue-800 mb-6">${training.title}</h5>
+                <div class="flex justify-between items-center text-sm text-gray-600">
+                  <div>التاريخ: ${formatDate(training.endDate)}</div>
+                  <div>المدرب: ${training.instructor}</div>
+                </div>
+              </div>
+            </div>
+            <button onclick="this.closest('.modal-overlay').remove()" class="btn-primary mt-6">
+              إغلاق
+            </button>
+          </div>
+        </div>
+      `;
+            
+      document.body.appendChild(modal);
+    }
+
+    // Advanced Analytics Functions
+    function renderAnalytics() {
+      renderRevenueAnalytics();
+      renderCategoryPerformance();
+      renderInstructorPerformance();
+      renderTimeDistribution();
+      renderPredictiveAnalytics();
+      renderSmartRecommendations();
+    }
+
+    function renderRevenueAnalytics() {
+      const currentMonth = new Date().getMonth();
+      const currentYear = new Date().getFullYear();
+            
+      const monthlyTrainings = trainings.filter(t => {
+        const trainingDate = new Date(t.startDate);
+        return trainingDate.getMonth() === currentMonth && trainingDate.getFullYear() === currentYear;
+      });
+
+      const monthlyRevenue = monthlyTrainings.reduce((sum, t) => sum + (t.price * t.currentParticipants), 0);
+      const avgPrice = trainings.length > 0 ? trainings.reduce((sum, t) => sum + t.price, 0) / trainings.length : 0;
+
+      document.getElementById('monthly-revenue').textContent = `${monthlyRevenue.toLocaleString()} ريال`;
+      document.getElementById('avg-price').textContent = `${avgPrice.toFixed(0)} ريال`;
+
+      // Find top revenue category
+      const categoryRevenue = {};
+      trainings.forEach(training => {
+        const revenue = training.price * training.currentParticipants;
+        categoryRevenue[training.category] = (categoryRevenue[training.category] || 0) + revenue;
+      });
+
+      const topCategory = Object.keys(categoryRevenue).reduce((a, b) => 
+        categoryRevenue[a] > categoryRevenue[b] ? a : b, Object.keys(categoryRevenue)[0]
+      );
+
+      document.getElementById('top-category').textContent = getCategoryName(topCategory || 'تقني');
+    }
+
+    function renderCategoryPerformance() {
+      const container = document.getElementById('category-performance');
+      const categoryStats = {};
+
+      trainings.forEach(training => {
+        if (!categoryStats[training.category]) {
+          categoryStats[training.category] = {
+            count: 0,
+            participants: 0,
+            revenue: 0,
+            avgRating: 0
+          };
+        }
+        categoryStats[training.category].count++;
+        categoryStats[training.category].participants += training.currentParticipants;
+        categoryStats[training.category].revenue += training.price * training.currentParticipants;
+        categoryStats[training.category].avgRating += training.rating;
+      });
+
+      // Calculate averages
+      Object.keys(categoryStats).forEach(category => {
+        categoryStats[category].avgRating = categoryStats[category].avgRating / categoryStats[category].count;
+      });
+
+      container.innerHTML = Object.entries(categoryStats).map(([category, stats]) => `
+        <div class="bg-gray-50 p-3 rounded-lg">
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-semibold text-gray-800">${getCategoryName(category)}</span>
+            <span class="text-sm text-gray-600">${stats.count} برامج</span>
+          </div>
+          <div class="text-xs text-gray-600">
+            <div>المتدربين: ${stats.participants}</div>
+            <div>الإيرادات: ${stats.revenue.toLocaleString()} ريال</div>
+            <div>التقييم: ${stats.avgRating.toFixed(1)}/5</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderInstructorPerformance() {
+      const container = document.getElementById('instructor-performance');
+      const instructorStats = {};
+
+      trainings.forEach(training => {
+        if (!instructorStats[training.instructor]) {
+          instructorStats[training.instructor] = {
+            count: 0,
+            participants: 0,
+            avgRating: 0
+          };
+        }
+        instructorStats[training.instructor].count++;
+        instructorStats[training.instructor].participants += training.currentParticipants;
+        instructorStats[training.instructor].avgRating += training.rating;
+      });
+
+      // Calculate averages and sort by performance
+      const sortedInstructors = Object.entries(instructorStats)
+        .map(([instructor, stats]) => ({
+          instructor,
+          ...stats,
+          avgRating: stats.avgRating / stats.count
+        }))
+        .sort((a, b) => b.participants - a.participants)
+        .slice(0, 5);
+
+      container.innerHTML = sortedInstructors.map(instructor => `
+        <div class="bg-gray-50 p-3 rounded-lg">
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-semibold text-gray-800">${instructor.instructor}</span>
+            <span class="text-sm text-gray-600">${instructor.count} برامج</span>
+          </div>
+          <div class="text-xs text-gray-600">
+            <div>المتدربين: ${instructor.participants}</div>
+            <div>التقييم: ${instructor.avgRating.toFixed(1)}/5</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderTimeDistribution() {
+      const container = document.getElementById('time-distribution');
+      const monthStats = {};
+
+      trainings.forEach(training => {
+        const month = new Date(training.startDate).getMonth();
+        const monthName = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+                 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'][month];
+        monthStats[monthName] = (monthStats[monthName] || 0) + 1;
+      });
+
+      container.innerHTML = Object.entries(monthStats).map(([month, count]) => `
+        <div class="bg-gray-50 p-3 rounded-lg">
+          <div class="flex justify-between items-center">
+            <span class="font-semibold text-gray-800">${month}</span>
+            <span class="text-sm text-gray-600">${count} برامج</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderPredictiveAnalytics() {
+      const avgParticipants = trainings.length > 0 ? 
+        trainings.reduce((sum, t) => sum + t.currentParticipants, 0) / trainings.length : 0;
+      const avgRevenue = trainings.length > 0 ? 
+        trainings.reduce((sum, t) => sum + (t.price * t.currentParticipants), 0) / trainings.length : 0;
+
+      // Simple predictions based on current trends
+      const predictedParticipants = Math.round(avgParticipants * trainings.length * 1.15); // 15% growth
+      const predictedRevenue = Math.round(avgRevenue * trainings.length * 1.12); // 12% growth
+      const suggestedPrograms = Math.max(3, Math.round(trainings.length * 0.3));
+
+      document.getElementById('predicted-participants').textContent = predictedParticipants;
+      document.getElementById('predicted-revenue').textContent = `${predictedRevenue.toLocaleString()} ريال`;
+      document.getElementById('suggested-programs').textContent = suggestedPrograms;
+    }
+
+    function renderSmartRecommendations() {
+      const container = document.getElementById('smart-recommendations');
+            
+      const recommendations = [
+        '🎯 زيادة البرامج التقنية بنسبة 20% لتلبية الطلب المتزايد',
+        '📈 تحسين برامج المهارات الناعمة لزيادة معدل الرضا',
+        '⏰ جدولة المزيد من البرامج في فترة الصباح لزيادة الإقبال',
+        '💡 إضافة برامج متخصصة في الذكاء الاصطناعي',
+        '🎓 تطوير برامج متقدمة للمتدربين ذوي الخبرة'
+      ];
+
+      container.innerHTML = recommendations.map(rec => `
+        <div class="bg-white p-3 rounded-lg border border-gray-200 text-sm text-gray-700">
+          ${rec}
+        </div>
+      `).join('');
+    }
+
+    // Enhanced switchTab function to handle new tabs
+    function switchTab(tabName) {
+      currentTab = tabName;
+            
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+      });
+            
+      // Show selected tab
+      document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+            
+      // Update nav buttons
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.classList.remove('active');
+      });
+            
+      event.target.classList.add('active');
+
+      // Render specific tab content
+      if (tabName === 'certificates') {
+        renderCertificates();
+      } else if (tabName === 'analytics') {
+        renderAnalytics();
+      }
+    }
+
+    // Initialize notifications on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add some sample notifications
+      setTimeout(() => {
+        addNotification('مرحباً بك في نظام إدارة التدريب المتقدم!', 'success');
+        addNotification('يوجد 3 برامج تدريبية تبدأ هذا الأسبوع', 'info');
+        addNotification('تذكير: مراجعة تقييمات المتدربين', 'info');
+        addNotification('🎓 تم تفعيل نظام الشهادات الذكي', 'success');
+        addNotification('📊 التحليلات المتقدمة متاحة الآن', 'info');
+      }, 2000);
+    });
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9956ded5d06d5365',t:'MTc2MTYxNzE1MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+ </body>
+</html>

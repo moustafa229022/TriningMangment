@@ -1,0 +1,5 @@
+git init
+git remote add origin https://github.com/moustafa229022/.git
+git add .
+git commit -m "رفع أول نسخة من الموقع"
+git push -u origin main
